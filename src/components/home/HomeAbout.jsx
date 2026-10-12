@@ -6,7 +6,7 @@ import {
   Sparkles,
   ShieldCheck,
   Cpu,
-  SunMedium,
+  Lock,
   CheckCircle,
 } from "lucide-react";
 
@@ -35,14 +35,14 @@ const services = [
   },
   {
     number: "03",
-    tag: "CLEAN ENERGY",
-    title: "Solar Energy Hub",
+    tag: "ACCESS & PERIMETER",
+    title: "Automated Gate & Lock",
     description:
-      "Efficient on-grid and hybrid solar systems with intelligent energy monitoring and battery backup.",
-    badgeIcon: SunMedium,
+      "Heavy-duty motorized gates and keyless biometric entry systems engineered for dependable perimeter control.",
+    badgeIcon: Lock,
     image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlFFvt68gCx0EOVl4cfPDHZtNtpj_gi9wHGci-be1dZw&s=10",
-    features: ["Hybrid", "Smart Battery", "Energy Monitor"],
+      "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=600&auto=format&fit=crop",
+    features: ["Biometric", "Obstacle Radar", "Remote Trigger"],
   },
 ];
 
@@ -148,7 +148,7 @@ export default function HomeAbout() {
             </h2>
 
             <p className="max-w-sm font-sans text-xs leading-5 text-blue-900/60 md:text-right">
-              Unified security, automation and energy solutions engineered for
+              Unified security, automation and access defense solutions engineered for
               modern spaces.
             </p>
           </div>
@@ -344,7 +344,7 @@ export default function HomeAbout() {
             <span className="text-blue-400">•</span>
             <span>Smart Mesh</span>
             <span className="text-blue-400">•</span>
-            <span>Energy Control</span>
+            <span>Access Defense</span>
           </div>
         </motion.div>
       </div>

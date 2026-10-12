@@ -1,4 +1,3 @@
-
 import React from "react";
 
 import HomeHero from "../components/home/HomeHero";
@@ -10,10 +9,8 @@ import HomeLocation from "../components/home/HomeLocation";
 export default function Home() {
   return (
     <main className="relative min-h-screen w-full overflow-x-hidden bg-[#F7FAF9] text-[#102A2A]">
-
       {/* ================= BACKGROUND ================= */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-
         {/* Emerald glow */}
         <div className="absolute -left-48 -top-48 h-[600px] w-[600px] rounded-full bg-emerald-200/30 blur-[140px]" />
 
@@ -22,7 +19,6 @@ export default function Home() {
 
         {/* Warm glow */}
         <div className="absolute bottom-0 left-1/3 h-[400px] w-[500px] rounded-full bg-yellow-100/40 blur-[130px]" />
-
       </div>
 
       {/* ================= CONTENT ================= */}
@@ -32,8 +28,6 @@ export default function Home() {
         <HomeHero />
       </section>
 
-    
-
       {/* 3. About */}
       <HomeAbout />
 
@@ -42,9 +36,6 @@ export default function Home() {
 
       {/* 5. Location */}
       <HomeLocation />
-
-      
-
     </main>
   );
 }

@@ -6,7 +6,7 @@ import {
   ArrowUpRight,
   Sparkles,
   ShieldCheck,
-  SunMedium,
+  Lock,
   Cpu,
 } from "lucide-react";
 
@@ -21,11 +21,11 @@ const slides = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4yM9dNsfpgzTEOZ5aXZEr6o8Q8HAF2yGL4XQWcmAnWA&s=10",},
   {
     id: 2,
-    title: "Architectural Solar Energy",
-    icon: SunMedium,
-    // Rooftop solar installation & clean energy architecture
+    title: "Access Control & Gate Automation",
+    icon: Lock,
+    // Modern motorized gate & biometric access control
     image:
-      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?q=80&w=1920&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?q=80&w=1920&auto=format&fit=crop",
   },
   {
     id: 3,
@@ -149,7 +149,7 @@ export default function HomeHero() {
           <br />
 
           <span className="text-blue-950/90">
-            Effortless.
+            Seamless
           </span>
         </motion.h1>
 
@@ -164,7 +164,7 @@ export default function HomeHero() {
           className="mx-auto mt-10 max-w-2xl font-sans text-sm leading-7 text-blue-950/70 sm:text-base lg:text-lg"
         >
           Reliable CCTV security, intelligent smart-home automation, and
-          high-efficiency solar energy systems designed to make modern spaces
+          motorized access control systems designed to make modern spaces
           safer, smarter, and resilient.
         </motion.p>
 
@@ -199,21 +199,7 @@ export default function HomeHero() {
           </Link>
         </motion.div>
 
-        {/* ================= SLIDER PAGINATION DOTS ================= */}
-        <div className="mt-12 flex items-center justify-center gap-2">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentSlide(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 transition-all duration-500 rounded-full ${
-                currentSlide === i
-                  ? "w-8 bg-blue-600"
-                  : "w-2 bg-blue-300/60 hover:bg-blue-400"
-              }`}
-            />
-          ))}
-        </div>
+      
       </div>
 
       {/* ================= DECORATIVE FLOATING ACCENTS ================= */}

@@ -11,6 +11,8 @@ import {
   ArrowDown,
   Layers,
   ChevronRight,
+  Search,
+  X,
 } from "lucide-react";
 
 const u = (id, w = 700) =>
@@ -58,10 +60,25 @@ const productCatalog = [
 
 const categories = ["ALL", "CONTROL", "PROTECT", "SENSE", "AUTOMATE"];
 
-const solarSystems = [
-  { title: "On-Grid Solar Systems", image: u("photo-1509391365360-2e959784a276", 800), description: "Direct utility connection with net metering to utilize generated solar power and export excess generation to the grid.", specs: "Urban Rooftops • Zero Battery Cost" },
-  { title: "Off-Grid Battery Solutions", image: u("photo-1508514177221-188b1cf16e9d", 800), description: "Fully self-reliant solar setups equipped with deep-cycle battery banks for uninterrupted continuous power.", specs: "Complete Energy Autonomy • Power Outage Shield" },
-  { title: "Hybrid & Micro-Inverters", image: u("photo-1497440001374-f26997328c1b", 800), description: "Panel-level optimization with smart inverter switching that balances battery storage and direct daylight power.", specs: "Intelligent Peak Shaving • Modular Expandability" },
+const accessSystems = [
+  {
+    title: "Motorized Sliding & Swing Gates",
+    image: u("photo-1506521781263-d8422e82f27a", 800),
+    description: "Industrial-grade DC/AC gate motors with dual remote triggers, obstacle sensing radars, and battery backup during power failures.",
+    specs: "Heavy Torque Motors • Automatic Radar Safety",
+  },
+  {
+    title: "Commercial Rolling Shutters",
+    image: u("photo-1558002038-1055907df827", 800),
+    description: "Central motorized rolling shutter drives engineered for storefronts, warehouses, and garages with wireless keypad and remote controls.",
+    specs: "Remote Keypad Sync • High-Duty Cycle Motors",
+  },
+  {
+    title: "Biometric & Video Intercom Hubs",
+    image: u("photo-1584438784894-089d6a62b8fa", 800),
+    description: "IP-connected video door phones paired with 5-in-1 biometric locks featuring fingerprint, anti-peep PIN, RFID, and live two-way talk.",
+    specs: "Full Duplex Audio • Keyless Biometric Entry",
+  },
 ];
 
 const ease = [0.22, 1, 0.36, 1];
@@ -186,9 +203,9 @@ function ProductCard({ prod }) {
 }
 
 /*
- * SOLAR CARD: Harmonized Sleek Spring Entry
+ * ACCESS CARD: Harmonized Sleek Spring Entry
  */
-function SolarCard({ system, index }) {
+function AccessCard({ system, index }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 28, scale: 0.96, filter: "blur(4px)" }}
@@ -202,7 +219,7 @@ function SolarCard({ system, index }) {
         delay: index * 0.1,
       }}
       whileHover={{ y: -6, transition: { duration: 0.2, ease: "easeOut" } }}
-      className="group flex flex-col justify-between overflow-hidden rounded-[26px] border border-white bg-white/95 shadow-[0_15px_45px_rgba(37,99,235,0.06)] backdrop-blur-xl transition-colors duration-300 hover:border-amber-200 hover:shadow-xl"
+      className="group flex flex-col justify-between overflow-hidden rounded-[26px] border border-white bg-white/95 shadow-[0_15px_45px_rgba(37,99,235,0.06)] backdrop-blur-xl transition-colors duration-300 hover:border-sky-200 hover:shadow-xl"
     >
       <div>
         <div className="relative h-44 w-full overflow-hidden bg-slate-100">
@@ -222,37 +239,80 @@ function SolarCard({ system, index }) {
               className="absolute -right-24 -top-24 h-72 w-72 rounded-full"
               style={{
                 background:
-                  "repeating-conic-gradient(from 0deg, rgba(251,191,36,0.35) 0deg 8deg, transparent 8deg 24deg)",
+                  "repeating-conic-gradient(from 0deg, rgba(14,165,233,0.35) 0deg 8deg, transparent 8deg 24deg)",
                 WebkitMaskImage: "radial-gradient(circle, black 0%, transparent 70%)",
                 maskImage: "radial-gradient(circle, black 0%, transparent 70%)",
               }}
             />
-            <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-amber-300/80 blur-xl" />
+            <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-sky-300/80 blur-xl" />
           </div>
         </div>
 
         <div className="p-6">
-          <h4 className="text-lg font-bold text-[#102A43] transition-colors group-hover:text-amber-600">
+          <h4 className="text-lg font-bold text-[#102A43] transition-colors group-hover:text-sky-600">
             {system.title}
           </h4>
           <p className="mt-2 text-xs leading-relaxed text-slate-500">{system.description}</p>
         </div>
       </div>
 
-      <div className="mx-6 mb-6 border-t border-slate-100 pt-4 text-[11px] font-bold text-amber-600">
+      <div className="mx-6 mb-6 border-t border-slate-100 pt-4 text-[11px] font-bold text-sky-600">
         {system.specs}
       </div>
     </motion.div>
   );
 }
 
+function OrbitingSignal() {
+  return (
+    <div className="pointer-events-none absolute inset-0 hidden overflow-hidden md:block" aria-hidden="true">
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+        className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-blue-200/40"
+      >
+        <motion.span
+          animate={{ scale: [1, 1.35, 1], opacity: [0.35, 0.9, 0.35] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -left-1.5 top-1/2 h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_22px_rgba(34,211,238,0.9)]"
+        />
+      </motion.div>
+
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ duration: 34, repeat: Infinity, ease: "linear" }}
+        className="absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-sky-200/30"
+      >
+        <motion.span
+          animate={{ scale: [1, 1.25, 1], opacity: [0.25, 0.75, 0.25] }}
+          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          className="absolute -right-1.5 top-1/2 h-3 w-3 rounded-full bg-blue-500 shadow-[0_0_22px_rgba(59,130,246,0.8)]"
+        />
+      </motion.div>
+    </div>
+  );
+}
+
 export default function Services() {
   const [activeCategory, setActiveCategory] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredProducts =
-    activeCategory === "ALL"
-      ? productCatalog
-      : productCatalog.filter((item) => item.category === activeCategory);
+  const filteredProducts = productCatalog.filter((item) => {
+    const matchesCategory = activeCategory === "ALL" || item.category === activeCategory;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch =
+      !q ||
+      item.name.toLowerCase().includes(q) ||
+      item.description.toLowerCase().includes(q) ||
+      item.tag.toLowerCase().includes(q) ||
+      item.category.toLowerCase().includes(q);
+    return matchesCategory && matchesSearch;
+  });
+
+  const handleResetFilters = () => {
+    setActiveCategory("ALL");
+    setSearchQuery("");
+  };
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#F7FBFF] font-sans text-[#102A43]">
@@ -265,6 +325,7 @@ export default function Services() {
 
       {/* ================= HERO ================= */}
       <section className="relative flex min-h-[58vh] items-center justify-center px-6 pb-14 pt-24">
+        <OrbitingSignal />
         <motion.div
           initial={{ opacity: 0, y: 35 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -275,7 +336,7 @@ export default function Services() {
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white/95 px-5 py-2 shadow-sm backdrop-blur-md">
             <span className="h-2 w-2 animate-pulse rounded-full bg-blue-600" />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-700">
-              Security • Automation • Energy
+              Security • Automation • Access
             </span>
           </div>
 
@@ -288,7 +349,7 @@ export default function Services() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-500 sm:text-lg">
-            Complete security surveillance, smart space automation, and clean solar systems engineered to work together effortlessly.
+            Complete security surveillance, smart space automation, and motorized access control systems engineered to work together effortlessly.
           </p>
 
           <motion.div
@@ -309,7 +370,7 @@ export default function Services() {
       {/* ================= PRODUCT LINEUP ================= */}
       <section className="relative px-6 py-16">
         <div className="relative z-10 mx-auto max-w-7xl">
-          <div className="mb-12 text-center">
+          <div className="mb-10 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-700">
               <Layers className="h-3.5 w-3.5" /> Product Catalogue
             </div>
@@ -320,37 +381,103 @@ export default function Services() {
               Every device is built to integrate with existing switches, gates, door locks, and appliances.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+            {/* Interactive Search Bar */}
+            <div className="mx-auto mt-8 max-w-xl">
+              <div className="relative flex items-center">
+                <Search className="absolute left-4.5 h-4 w-4 text-slate-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search hardware (e.g. switch, biometric lock, gate motor, radar)..."
+                  className="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-11 pr-11 text-sm text-slate-800 shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3.5 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition"
+                    title="Clear search"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Category Filter Pills */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
               {categories.map((cat) => (
-                <button
+                <motion.button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
+                  whileTap={{ scale: 0.95 }}
+                  className={`relative rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wider transition-colors duration-200 ${
                     activeCategory === cat
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-2 ring-blue-600/20"
+                      ? "text-white"
                       : "border border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50/50"
                   }`}
                 >
-                  {cat}
-                </button>
+                  {activeCategory === cat && (
+                    <motion.span
+                      layoutId="active-category-pill"
+                      transition={{ type: "spring", stiffness: 420, damping: 30 }}
+                      className="absolute inset-0 -z-0 rounded-full bg-blue-600 shadow-md shadow-blue-500/25 ring-2 ring-blue-600/20"
+                    />
+                  )}
+                  <span className="relative z-10">{cat}</span>
+                </motion.button>
               ))}
+            </div>
+
+            {/* Result Counter & Active Filter Badge */}
+            <div className="mt-4 flex items-center justify-center gap-2 font-mono text-[11px] text-slate-400">
+              <span>Showing {filteredProducts.length} of {productCatalog.length} solutions</span>
+              {searchQuery && (
+                <span className="rounded bg-sky-100 px-2 py-0.5 text-sky-800 font-sans">
+                  Query: "{searchQuery}"
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Staggered Container Grid */}
-          <motion.div
-            layout
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredProducts.map((prod) => (
-                <ProductCard key={prod.name} prod={prod} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          {/* Staggered Container Grid or Empty State */}
+          {filteredProducts.length > 0 ? (
+            <motion.div
+              layout
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredProducts.map((prod) => (
+                  <ProductCard key={prod.name} prod={prod} />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mx-auto my-12 max-w-md rounded-3xl border border-dashed border-slate-200 bg-white/80 p-8 text-center"
+            >
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-400">
+                <Search className="h-6 w-6" />
+              </div>
+              <h3 className="mt-4 font-serif text-lg font-bold text-slate-800">
+                No matching hardware found
+              </h3>
+              <p className="mt-1 text-xs text-slate-500">
+                No components match your search for "{searchQuery}". Try a different keyword or reset the category filter.
+              </p>
+              <button
+                onClick={handleResetFilters}
+                className="mt-5 rounded-full bg-blue-600 px-5 py-2 text-xs font-bold text-white shadow hover:bg-blue-700 transition"
+              >
+                Reset All Filters
+              </button>
+            </motion.div>
+          )}
 
           {/* Protocols Strip */}
           <motion.div
@@ -402,6 +529,11 @@ export default function Services() {
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#102A43]/85 via-blue-950/40 to-transparent lg:bg-gradient-to-r" />
+                <motion.div
+                  animate={{ y: ["-100%", "300%"] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: "linear", repeatDelay: 1.5 }}
+                  className="pointer-events-none absolute left-0 right-0 top-0 h-20 bg-gradient-to-b from-transparent via-cyan-300/25 to-transparent blur-sm"
+                />
                 <div className="absolute bottom-6 left-6 right-6 text-white">
                   <span className="rounded-full bg-blue-500/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
                     24/7 Shield
@@ -445,26 +577,26 @@ export default function Services() {
         </div>
       </section>
 
-      {/* ================= SOLAR ================= */}
+      {/* ================= ACCESS & PERIMETER ================= */}
       <section className="relative px-6 pb-28 pt-8">
         <div className="relative z-10 mx-auto w-full max-w-6xl">
           <div className="mb-12 flex flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-amber-600">
-                Renewable Energy
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600">
+                Perimeter Defense
               </span>
               <h3 className="mt-2 font-serif text-3xl font-normal text-[#102A43] sm:text-4xl">
-                Solar Generation Systems
+                Motorized Gates & Access Systems
               </h3>
             </div>
             <p className="max-w-md text-sm text-slate-500">
-              Harness clean power during peak sunlight hours and orchestrate high-draw appliances through smart automation rules.
+              Fortify boundaries and streamline everyday vehicle and visitor entry with heavy-duty automation and biometric controls.
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {solarSystems.map((system, i) => (
-              <SolarCard key={system.title} system={system} index={i} />
+            {accessSystems.map((system, i) => (
+              <AccessCard key={system.title} system={system} index={i} />
             ))}
           </div>
 

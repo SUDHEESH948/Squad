@@ -1,14 +1,19 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Video,
   Cpu,
-  Sun,
+  Lock,
   Home,
   ArrowRight,
   CheckCircle2,
   Sparkles,
+  X,
+  ExternalLink,
+  MessageCircle,
 } from "lucide-react";
+import { companyInfo } from "../data/companyData";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -47,14 +52,14 @@ const projects = [
     image: u("photo-1513694203232-719a280e022f"),
   },
   {
-    title: "Rooftop Hybrid Solar Solution",
-    category: "Solar",
+    title: "Biometric Villa Access & Intercom",
+    category: "Access Control",
     description:
-      "Hybrid rooftop photovoltaic arrays with intelligent micro-inverters engineered to power perimeter security, cameras, and residential UPS loads.",
-    tags: ["Hybrid Solar", "UPS Backup", "Micro Inverters"],
-    icon: <Sun className="h-6 w-6" />,
+      "Integrated smart digital biometric locks with multi-apartment video door phone intercoms, keypad backup, and instantaneous mobile entry authorization.",
+    tags: ["Smart Biometrics", "Video Intercom", "Keyless Entry"],
+    icon: <Lock className="h-6 w-6" />,
     color: "sky",
-    image: u("photo-1509391365360-2e959784a276"),
+    image: u("photo-1584438784894-089d6a62b8fa"),
   },
 ];
 
@@ -97,7 +102,7 @@ const palette = {
 /*
  * BLUEPRINT TRACE + IMAGE REVEAL CARD
  */
-function ProjectCard({ item, index }) {
+function ProjectCard({ item, index, onSelect }) {
   const c = palette[item.color];
   const d = index * 0.15;
   const view = { once: true, amount: 0.2 };
@@ -109,7 +114,8 @@ function ProjectCard({ item, index }) {
       viewport={view}
       whileHover={{ y: -7 }}
       transition={{ duration: 0.3 }}
-      className="group relative"
+      onClick={onSelect}
+      className="group relative cursor-pointer"
     >
       {/* Blueprint SVG outline */}
       <svg className="pointer-events-none absolute inset-0 z-30 h-full w-full overflow-visible">
@@ -252,9 +258,12 @@ function ProjectCard({ item, index }) {
               <CheckCircle2 className="h-4 w-4 text-sky-500" />
               Custom engineered installation
             </div>
-            <ArrowRight
-              className={`h-5 w-5 text-slate-300 transition-all ${c.arrow} group-hover:translate-x-1.5`}
-            />
+            <div className={`flex items-center gap-1.5 text-xs font-bold ${c.category}`}>
+              <span>View Specs</span>
+              <ArrowRight
+                className={`h-4 w-4 text-slate-400 transition-all ${c.arrow} group-hover:translate-x-1.5`}
+              />
+            </div>
           </div>
         </div>
       </motion.div>
@@ -272,7 +281,7 @@ const steps = [
   {
     n: "02",
     title: "Integrate",
-    text: "Security, gate motors, lighting, and solar power are connected into a synchronized, local-first ecosystem.",
+    text: "Surveillance, gate motors, lighting, and access controls are connected into a synchronized, local-first ecosystem.",
     text2: "blue",
   },
   {
@@ -305,6 +314,24 @@ const stepStyle = {
 };
 
 export default function Projects() {
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [selectedProject, setSelectedProject] = useState(null);
+
+  const categories = ["ALL", "Surveillance", "Automation", "Smart Home", "Access Control"];
+
+  const filteredProjects =
+    selectedCategory === "ALL"
+      ? projects
+      : projects.filter((p) => p.category === selectedCategory);
+
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setSelectedProject(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#F7FBFF] text-slate-800">
       {/* BACKGROUND GLOWS */}
@@ -339,12 +366,12 @@ export default function Projects() {
           </h1>
 
           <p className="mx-auto mt-7 max-w-2xl font-sans text-base leading-8 text-slate-500 sm:text-lg">
-            Explore live implementations of high-definition CCTV, automated gates, connected smart homes, and hybrid solar systems.
+            Explore live implementations of high-definition CCTV, automated gates, connected smart homes, and biometric access controls.
           </p>
         </motion.div>
       </section>
 
-      {/* PROJECTS GRID */}
+      {/* PROJECTS GRID & CATEGORY FILTERS */}
       <section className="relative px-6 pb-28">
         <div className="mx-auto max-w-6xl">
           <motion.div
@@ -352,7 +379,7 @@ export default function Projects() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+            className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"
           >
             <div>
               <p className="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-sky-600">
@@ -362,14 +389,33 @@ export default function Projects() {
                 What we build & deploy
               </h2>
             </div>
-            <p className="max-w-md font-sans text-sm text-slate-400 sm:text-right">
-              Architectural grade installations engineered for villas, commercial offices, and modern spaces.
-            </p>
+            
+            {/* Category Filter Tabs */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
+                    selectedCategory === cat
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                      : "border border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:bg-blue-50/50"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </motion.div>
 
           <div className="grid gap-8 md:grid-cols-2">
-            {projects.map((item, i) => (
-              <ProjectCard key={item.title} item={item} index={i} />
+            {filteredProjects.map((item, i) => (
+              <ProjectCard
+                key={item.title}
+                item={item}
+                index={i}
+                onSelect={() => setSelectedProject(item)}
+              />
             ))}
           </div>
         </div>
@@ -454,16 +500,132 @@ export default function Projects() {
               </p>
             </div>
 
-            <a
-              href="/contact"
+            <Link
+              to="/contact"
               className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-white px-7 py-4 font-bold text-blue-900 shadow-[0_10px_30px_rgba(255,255,255,0.12)] transition-all duration-300 hover:bg-sky-50"
             >
               Discuss Your Project
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </a>
+            </Link>
           </div>
         </motion.div>
       </section>
+
+      {/* ================= PROJECT DETAIL MODAL / LIGHTBOX ================= */}
+      <AnimatePresence>
+        {selectedProject && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedProject(null)}
+              className="absolute inset-0 bg-slate-950/75 backdrop-blur-md"
+            />
+
+            {/* Modal Dialog */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 26 }}
+              className="relative z-10 max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-[32px] border border-sky-100 bg-white p-6 shadow-2xl sm:p-8"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedProject(null)}
+                aria-label="Close dialog"
+                className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              {/* Modal Image Header */}
+              <div className="relative h-64 sm:h-72 w-full overflow-hidden rounded-2xl bg-slate-100">
+                <img
+                  src={selectedProject.image}
+                  alt={selectedProject.title}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                <span className="absolute bottom-4 left-4 rounded-full bg-sky-500 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-white">
+                  {selectedProject.category}
+                </span>
+              </div>
+
+              {/* Modal Content */}
+              <div className="mt-6">
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900">
+                  {selectedProject.title}
+                </h3>
+                <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-600">
+                  {selectedProject.description}
+                </p>
+
+                {/* Technical Specifications */}
+                <div className="mt-6 rounded-2xl border border-sky-100 bg-sky-50/50 p-5">
+                  <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-sky-800">
+                    Architectural & Engineering Highlights
+                  </h4>
+                  <ul className="mt-3 grid gap-2.5 sm:grid-cols-2 text-xs text-slate-700">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span>Zero-latency local priority mesh</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span>Industrial weatherproof enclosure</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span>Encrypted cloud & local storage</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <span>Emergency battery fallback integration</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Tags */}
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {selectedProject.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-mono text-[11px] font-semibold text-slate-600"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Modal Action CTA Buttons */}
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <Link
+                    to="/contact"
+                    onClick={() => setSelectedProject(null)}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow hover:bg-blue-700 transition"
+                  >
+                    <span>Request Similar Solution</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+
+                  <a
+                    href={companyInfo.whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-3.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition"
+                  >
+                    <MessageCircle className="h-4 w-4 text-emerald-600" />
+                    <span>WhatsApp Technical Inquiry</span>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

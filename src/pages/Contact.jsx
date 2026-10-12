@@ -13,8 +13,13 @@ import {
   Send,
   Building2,
   CalendarCheck,
+  MessageCircle,
+  AlertCircle,
+  Loader2,
+  Navigation,
 } from "lucide-react";
 import { companyInfo } from "../data/companyData";
+import { submitConsultation } from "../utils/contactAdapter";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -127,19 +132,86 @@ function SuccessBurst() {
 }
 
 export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    service: "Full Smart Villa Automation",
+    details: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState("idle"); // "idle" | "submitting" | "success" | "error"
+  const [submissionResult, setSubmissionResult] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+  const validate = () => {
+    const errs = {};
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      errs.name = "Please enter your name (minimum 2 characters).";
+    }
+    const cleanPhone = formData.phone.trim().replace(/[\s-]/g, "");
+    if (!/^(?:(?:\+|0{0,2})91)?[6-9]\d{9}$/.test(cleanPhone)) {
+      errs.phone = "Please enter a valid 10-digit Indian mobile number (e.g. +91 99477 36929).";
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errs.email = "Please enter a valid email address.";
+    }
+    return errs;
   };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    setStatus("submitting");
+
+    try {
+      const result = await submitConsultation(formData);
+      setSubmissionResult(result);
+      setStatus("success");
+    } catch (err) {
+      console.error("Submission failed:", err);
+      setStatus("error");
+    }
+  };
+
+  // WhatsApp pre-filled message URL
+  const whatsappText = encodeURIComponent(
+    `Hello Squad Security System,\n\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nService: ${formData.service}\nDetails: ${formData.details || "Consultation request"}`
+  );
+  const directWhatsAppUrl = `https://wa.me/${companyInfo.whatsappNumber}?text=${whatsappText}`;
 
   const rows = [
     {
       icon: MapPin,
       tone: "text-sky-300",
       label: "Headquarters & Experience Hub",
-      body: <p className="text-sm leading-6 text-blue-50 sm:text-base">{companyInfo.address}</p>,
+      body: (
+        <>
+          <p className="text-sm leading-6 text-blue-50 sm:text-base">{companyInfo.address}</p>
+          <a
+            href={companyInfo.directionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-sky-300 hover:text-sky-200 transition"
+          >
+            <Navigation className="h-3 w-3" />
+            Get Driving Directions
+          </a>
+        </>
+      ),
     },
     {
       icon: Phone,
@@ -148,8 +220,34 @@ export default function Contact() {
       body: (
         <>
           <p className="text-sm font-bold text-white">{companyInfo.contactPerson}</p>
-          <p className="mt-1 text-sm text-blue-100/90">{companyInfo.phones?.join(" / ") || "+91 98765 43210"}</p>
+          <div className="mt-1 space-y-1">
+            {companyInfo.phones.map((p) => (
+              <a
+                key={p}
+                href={`tel:${p}`}
+                className="block text-sm text-blue-100/90 hover:text-sky-300 transition"
+              >
+                {p}
+              </a>
+            ))}
+          </div>
         </>
+      ),
+    },
+    {
+      icon: MessageCircle,
+      tone: "text-emerald-300",
+      label: "Official WhatsApp Support",
+      body: (
+        <a
+          href={companyInfo.whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-300 hover:text-emerald-200 transition"
+        >
+          <span>Chat on WhatsApp (+91 99477 36929)</span>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </a>
       ),
     },
     {
@@ -158,10 +256,10 @@ export default function Contact() {
       label: "Official Correspondence",
       body: (
         <a
-          href="mailto:contact@squadsecurity.com"
+          href={`mailto:${companyInfo.email}`}
           className="text-sm text-blue-50 transition-colors hover:text-sky-300 sm:text-base"
         >
-          contact@squadsecurity.com
+          {companyInfo.email}
         </a>
       ),
     },
@@ -169,7 +267,7 @@ export default function Contact() {
       icon: Clock,
       tone: "text-indigo-300",
       label: "Support & Working Hours",
-      body: <p className="text-sm text-blue-50">{companyInfo.workingHours || "Mon – Sat: 9:00 AM – 7:00 PM"}</p>,
+      body: <p className="text-sm text-blue-50">{companyInfo.workingHours}</p>,
     },
   ];
 
@@ -214,7 +312,7 @@ export default function Contact() {
             transition={{ duration: 0.7, delay: 1.1 }}
             className="mx-auto mt-6 max-w-2xl font-sans text-base leading-relaxed text-slate-500 sm:text-lg"
           >
-            Schedule a site visit, explore live hardware demonstration demos, or request a complete project quotation for security, automation, and solar setups.
+            Schedule a site visit, explore live hardware demonstration demos, or request a complete project quotation for surveillance, automation, and access control setups.
           </motion.p>
         </div>
       </section>
@@ -273,29 +371,32 @@ export default function Contact() {
           </motion.div>
 
           {/* Card 3: Instant WhatsApp / Quick Chat */}
-          <motion.div
+          <motion.a
+            href={companyInfo.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="group relative flex flex-col justify-end overflow-hidden rounded-[26px] border border-sky-100 bg-slate-900 p-6 shadow-md shadow-blue-500/5 min-h-[220px] sm:col-span-2 lg:col-span-1"
+            className="group relative flex flex-col justify-end overflow-hidden rounded-[26px] border border-emerald-300 bg-slate-900 p-6 shadow-md min-h-[220px] sm:col-span-2 lg:col-span-1"
           >
             <img
               src={u("photo-1557597774-9d273605dfa9", 700)}
               alt="Rapid Dispatch"
               className="absolute inset-0 h-full w-full object-cover opacity-50 transition-transform duration-700 ease-out group-hover:scale-108"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-emerald-950/20" />
             <div className="relative z-10 text-white">
-              <span className="inline-block rounded-full bg-emerald-500/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
-                Fast Response
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow">
+                <MessageCircle className="h-3 w-3" /> WhatsApp Live
               </span>
-              <h4 className="mt-2 font-serif text-xl font-bold">Quick Technical Support</h4>
-              <p className="mt-1 text-xs leading-relaxed text-slate-300">
-                Direct WhatsApp assistance and emergency support for installed networks.
+              <h4 className="mt-2 font-serif text-xl font-bold">Immediate Chat Support</h4>
+              <p className="mt-1 text-xs leading-relaxed text-emerald-100">
+                Click to initiate direct conversation with Yousaf Ali (+91 99477 36929).
               </p>
             </div>
-          </motion.div>
+          </motion.a>
         </div>
       </section>
 
@@ -383,7 +484,7 @@ export default function Contact() {
           >
             <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-sky-200/20 blur-[90px]" />
 
-            {!submitted ? (
+            {status !== "success" ? (
               <>
                 <div className="relative z-10 mb-8">
                   <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50/70 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-blue-700">
@@ -400,23 +501,67 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field label="Your Name" index={0}>
-                      <input required type="text" placeholder="John Doe" className={inputCls} />
+                      <input
+                        required
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        disabled={status === "submitting"}
+                        placeholder="John Doe"
+                        className={`${inputCls} ${errors.name ? "border-rose-400 bg-rose-50/30" : ""}`}
+                      />
+                      {errors.name && (
+                        <p className="mt-1 text-[11px] text-rose-500 font-semibold">{errors.name}</p>
+                      )}
                     </Field>
-                    <Field label="Phone Number" index={1}>
-                      <input required type="tel" placeholder="+91 98765 43210" className={inputCls} />
+
+                    <Field label="Phone Number (Indian)" index={1}>
+                      <input
+                        required
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        disabled={status === "submitting"}
+                        placeholder="+91 99477 36929"
+                        className={`${inputCls} ${errors.phone ? "border-rose-400 bg-rose-50/30" : ""}`}
+                      />
+                      {errors.phone && (
+                        <p className="mt-1 text-[11px] text-rose-500 font-semibold">{errors.phone}</p>
+                      )}
                     </Field>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field label="Email Address" index={2}>
-                      <input required type="email" placeholder="name@domain.com" className={inputCls} />
+                      <input
+                        required
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        disabled={status === "submitting"}
+                        placeholder="name@domain.com"
+                        className={`${inputCls} ${errors.email ? "border-rose-400 bg-rose-50/30" : ""}`}
+                      />
+                      {errors.email && (
+                        <p className="mt-1 text-[11px] text-rose-500 font-semibold">{errors.email}</p>
+                      )}
                     </Field>
+
                     <Field label="Service Required" index={3}>
-                      <select className={inputCls}>
+                      <select
+                        name="service"
+                        value={formData.service}
+                        onChange={handleChange}
+                        disabled={status === "submitting"}
+                        className={inputCls}
+                      >
                         <option>Full Smart Villa Automation</option>
                         <option>CCTV Surveillance Network</option>
                         <option>Gate / Motorized Shutter Automation</option>
-                        <option>Rooftop Solar Solutions</option>
+                        <option>Perimeter Radar & Security Sensors</option>
                         <option>Smart Locks & Video Intercom</option>
                       </select>
                     </Field>
@@ -425,46 +570,114 @@ export default function Contact() {
                   <Field label="Project & Property Details" index={4}>
                     <textarea
                       rows="4"
+                      name="details"
+                      value={formData.details}
+                      onChange={handleChange}
+                      disabled={status === "submitting"}
                       placeholder="Specify your property type, rooms/areas to automate, or specific requirements..."
                       className={`${inputCls} resize-none`}
                     />
                   </Field>
 
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit"
-                    className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 py-4 text-sm font-bold text-white shadow-lg shadow-blue-600/15 transition-all duration-300 hover:from-sky-500 hover:via-blue-500 hover:to-indigo-500"
-                  >
-                    Send Quotation Request
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </motion.button>
+                  {/* Submission Error state */}
+                  {status === "error" && (
+                    <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
+                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      <span>Submission encountered an error. Please try again or reach out on WhatsApp below.</span>
+                    </div>
+                  )}
+
+                  <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                    {/* Submit Button */}
+                    <motion.button
+                      type="submit"
+                      disabled={status === "submitting"}
+                      whileTap={{ scale: 0.98 }}
+                      className="group flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 py-4 text-sm font-bold text-white shadow-lg shadow-blue-600/15 transition-all duration-300 hover:from-sky-500 hover:via-blue-500 hover:to-indigo-500 disabled:opacity-60"
+                    >
+                      {status === "submitting" ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Validating Request...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Send Quotation Request</span>
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </>
+                      )}
+                    </motion.button>
+
+                    {/* Quick WhatsApp Alternative */}
+                    <a
+                      href={companyInfo.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-4 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition"
+                      title="Send via WhatsApp"
+                    >
+                      <MessageCircle className="h-4 w-4 text-emerald-600" />
+                      <span>WhatsApp</span>
+                    </a>
+                  </div>
                 </form>
               </>
             ) : (
-              <div className="relative z-10 flex min-h-[500px] flex-col items-center justify-center text-center">
+              <div className="relative z-10 flex min-h-[480px] flex-col items-center justify-center text-center p-4">
                 <SuccessBurst />
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.8 }}
-                  className="flex flex-col items-center"
+                  className="flex flex-col items-center max-w-lg"
                 >
                   <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-sky-600">
-                    Confirmation Received
+                    Consultation Recorded
                   </p>
                   <h3 className="font-serif text-3xl font-bold text-slate-900 sm:text-4xl">
-                    Thank You!
+                    Thank You, {formData.name}!
                   </h3>
-                  <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-500">
-                    We've received your request. An engineer from Squad Security System will get in touch with you shortly.
+                  
+                  {/* Honest state explanation */}
+                  <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                    {submissionResult?.message || "Your details have been validated by the Squad Security interface."}
                   </p>
+
+                  <div className="mt-6 w-full rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 text-left">
+                    <div className="flex items-start gap-3">
+                      <MessageCircle className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-bold text-emerald-950">
+                          Instant Response via WhatsApp Available
+                        </p>
+                        <p className="mt-1 text-xs text-emerald-800 leading-relaxed">
+                          For fastest technical response, send your pre-filled inquiry directly to our lead engineer Yousaf Ali:
+                        </p>
+                        <a
+                          href={directWhatsAppUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-700 transition"
+                        >
+                          <span>Forward via WhatsApp (+91 99477 36929)</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
                   <button
-                    onClick={() => setSubmitted(false)}
-                    className="mt-8 rounded-xl border border-sky-200 bg-white px-7 py-3 text-sm font-bold text-slate-800 shadow-sm transition-all hover:border-sky-400 hover:text-sky-700 hover:shadow-md"
+                    onClick={() => {
+                      setStatus("idle");
+                      setFormData({
+                        name: "",
+                        phone: "",
+                        email: "",
+                        service: "Full Smart Villa Automation",
+                        details: "",
+                      });
+                    }}
+                    className="mt-8 rounded-xl border border-sky-200 bg-white px-7 py-3 text-sm font-bold text-slate-800 shadow-sm transition hover:border-sky-400 hover:text-sky-700 hover:shadow-md"
                   >
                     Send Another Request
                   </button>

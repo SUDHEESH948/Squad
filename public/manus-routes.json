@@ -1,0 +1,10 @@
+{
+  "routes": [
+    { "path": "/", "name": "Home" },
+    { "path": "/services", "name": "Services" },
+    { "path": "/projects", "name": "Projects" },
+    { "path": "/about", "name": "About" },
+    { "path": "/contact", "name": "Contact" }
+  ]
+}
+
